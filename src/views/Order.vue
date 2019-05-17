@@ -1,12 +1,12 @@
 <template>
     <v-container fluid>
         <v-layout row wrap>
-            <v-flex xs4 mr pr-4>
-                <Aside></Aside>
+            <v-flex xs3 mr pr-4>
+                <Aside/>
             </v-flex>
-            <v-flex xs8>
+            <v-flex xs9>
                 <v-card class="pa-4">
-                    <v-card-text>jjjl</v-card-text>
+                    <Main/>
                 </v-card>
             </v-flex>
         </v-layout>
@@ -14,10 +14,12 @@
 </template>
 
 <script>
-    import Aside from '@/components/order/Aside'
+    import Aside from '@/components/order/Aside/Aside'
+    import Main from '@/components/order/Main/Main'
     export default {
         components: {
-            Aside
+            Aside,
+            Main
         }
     }
 </script>
