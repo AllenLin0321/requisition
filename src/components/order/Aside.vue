@@ -11,28 +11,26 @@
       </v-toolbar>
 
       <!-- Label -->
-      <AsideItem
-        v-for="(label, index) in labels"
-        :key="index"/>
+      <AsideMain
+        v-for="(catelog, index) in catelogs"
+        :key="index"
+        :catelog="catelog"/>
 
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
-  import AsideItem from './AsideItem'
+  import AsideMain from './AsideMain'
 
   export default {
     data() {
       return {
-        labels: this.$store.getters.labels
+        catelogs: this.$store.getters.labels
       }
     },
     components: {
-      AsideItem
-    },
-    created() {
-      console.log(labels);
+      AsideMain
     }
   }
 </script>
