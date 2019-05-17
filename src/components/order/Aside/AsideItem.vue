@@ -6,7 +6,7 @@
       </v-list-tile>
     </template>
 
-    <v-list-tile v-for="(label, i) in subCatelog.labels" :key="i" @click="alert">
+    <v-list-tile v-for="(label, i) in subCatelog.labels" :key="i" @click="saveData">
       <v-list-tile-title v-text="label"></v-list-tile-title>
     </v-list-tile>
   </v-list-group>
@@ -16,8 +16,9 @@
 export default {
   props: ["subCatelog"],
   methods: {
-    alert(element) {
-      alert(element.target.innerText);
+    saveData(element) {
+      this.$store.dispatch('saveMaterial', element.target.innerText);
+      console.log(this.$store.getters.material);
     }
   }
 };

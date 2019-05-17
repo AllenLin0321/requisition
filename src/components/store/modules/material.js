@@ -3,7 +3,7 @@ const state = {
 }
 
 const mutations = {
-    'SET_MATERIAL' (state, material) {
+    'SAVE_MATERIAL' (state, material) {
         state.material.push(material);
     }
 }
@@ -15,7 +15,9 @@ const getters = {
 }
 
 const actions = {
-
+    saveMaterial: ({commit}, material) => {
+        commit('SAVE_MATERIAL', material);
+    }
 }
 
 export default {
