@@ -17,7 +17,12 @@ export default {
   props: ["subCatelog"],
   methods: {
     saveData(element) {
-      this.$store.dispatch('saveMaterial', element.target.innerText);
+      const item = {
+        item: element.target.innerText,
+        quantity: '1',
+        unit: '個'
+      }
+      this.$store.dispatch('saveMaterial', item);
     }
   }
 };

@@ -14,19 +14,27 @@ const state = {
 }
 
 const mutations = {
+    // Add Item from Catelog to Tabel
     'SAVE_MATERIAL'(state, material) {
         state.materials.push(material);
     },
+    // Delete the Item on the table
     'DELETE_MATERIAL'(state, index) {
         state.materials.splice(index, 1);
     },
-    'COPY_MATERIAL'(state, index) {
-        const value = state.materials[index];
-        state.materials.splice(index, 0, value);
-    },
-    'CHANGE_FILENAME' (state, fileName) {
+    // Change the table Name
+    'CHANGE_FILENAME'(state, fileName) {
         state.fileName = fileName;
+    },
+    // Update the quantity 
+    'UPDATE_QUANTITY'(state, data) {
+        state.materials[data.index].quantity = data.quantity;
+    },
+    // Update the unit
+    'UPDATE_UNIT'(state, data) {
+        state.materials[data.index].unit = data.unit;
     }
+
 }
 
 const getters = {
@@ -55,13 +63,20 @@ const actions = {
     }, index) => {
         commit('DELETE_MATERIAL', index);
     },
-    copyMaterial: ({
+    changeFileName: ({
         commit
-    }, index) => {
-        commit('COPY_MATERIAL', index);
-    },
-    changeFileName: ({commit}, fileName) => {
+    }, fileName) => {
         commit('CHANGE_FILENAME', fileName);
+    },
+    update_quantity: ({
+        commit
+    }, data) => {
+        commit('UPDATE_QUANTITY', data);
+    },
+    update_unit: ({
+        commit
+    }, data) => {
+        commit('UPDATE_UNIT', data)
     }
 }
 
