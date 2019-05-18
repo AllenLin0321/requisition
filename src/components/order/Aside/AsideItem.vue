@@ -18,7 +18,7 @@ export default {
   methods: {
     saveData(element) {
       this.$store.dispatch('saveMaterial', element.target.innerText);
-      console.log(this.$store.getters.material);
+      console.log(this.$store.getters.materials);
     }
   }
 };

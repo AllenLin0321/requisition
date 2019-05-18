@@ -1,16 +1,26 @@
 const state = {
-    material: []
+    materials: [],
+    header: {
+        order: "#",
+        item: "項目",
+        number: "數量",
+        unit: "單位",
+        action: "動作"
+      }
 }
 
 const mutations = {
     'SAVE_MATERIAL' (state, material) {
-        state.material.push(material);
+        state.materials.push(material);
     }
 }
 
 const getters = {
-    material() {
-        return state.material
+    materials() {
+        return state.materials
+    },
+    header() {
+        return state.header
     }
 }
 

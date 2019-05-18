@@ -43,12 +43,18 @@ const state = {
                 }
             ]
         }
+    ],
+    units: [
+        '張', '捆', '捲', '個'
     ]
 }
 
 const getters = {
     labels() {
         return state.labels
+    },
+    units() {
+        return state.units;
     }
 }
 
