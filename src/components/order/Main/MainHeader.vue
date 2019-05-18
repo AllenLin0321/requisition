@@ -4,7 +4,7 @@
     <v-flex xs4 class="item">{{ header.item }}</v-flex>
     <v-flex xs2 class="number">{{ header.number }}</v-flex>
     <v-flex xs2 class="unit">{{ header.unit }}</v-flex>
-    <v-flex xs3 class="action">{{ header.action }}</v-flex>
+    <v-flex xs3 class="action" pl-3>{{ header.action }}</v-flex>
   </v-layout>
 </template>
 

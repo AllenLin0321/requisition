@@ -12,6 +12,13 @@ const state = {
 const mutations = {
     'SAVE_MATERIAL' (state, material) {
         state.materials.push(material);
+    },
+    'DELETE_MATERIAL' (state, index) {
+        state.materials.splice(index, 1);
+    },
+    'COPY_MATERIAL' (state, index) {
+        const value = state.materials[index];
+        state.materials.splice(index, 0, value);
     }
 }
 
@@ -27,6 +34,12 @@ const getters = {
 const actions = {
     saveMaterial: ({commit}, material) => {
         commit('SAVE_MATERIAL', material);
+    },
+    deleteMaterial: ({commit}, index) => {
+        commit('DELETE_MATERIAL', index);
+    },
+    copyMaterial: ({commit}, index) => {
+        commit('COPY_MATERIAL', index);
     }
 }
 
