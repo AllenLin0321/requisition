@@ -2,7 +2,7 @@
   <v-layout row wrap class="header" pa-3>
     <v-flex xs1 class="order">{{ header.order }}</v-flex>
     <v-flex xs4 class="item">{{ header.item }}</v-flex>
-    <v-flex xs2 class="number">{{ header.number }}</v-flex>
+    <v-flex xs2 class="quantity">{{ header.quantity }}</v-flex>
     <v-flex xs2 class="unit">{{ header.unit }}</v-flex>
     <v-flex xs3 class="action" pl-3>{{ header.action }}</v-flex>
   </v-layout>

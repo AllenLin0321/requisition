@@ -3,13 +3,14 @@ const state = {
     header: {
         order: "#",
         item: "項目",
-        number: "數量",
+        quantity: "數量",
         unit: "單位",
         action: "動作"
     },
     units: [
         '個', '張', '捆', '捲'
-    ]
+    ],
+    fileName: '叫料單'
 }
 
 const mutations = {
@@ -22,6 +23,9 @@ const mutations = {
     'COPY_MATERIAL'(state, index) {
         const value = state.materials[index];
         state.materials.splice(index, 0, value);
+    },
+    'CHANGE_FILENAME' (state, fileName) {
+        state.fileName = fileName;
     }
 }
 
@@ -34,6 +38,9 @@ const getters = {
     },
     units() {
         return state.units;
+    },
+    fileName() {
+        return state.fileName;
     }
 }
 
@@ -52,6 +59,9 @@ const actions = {
         commit
     }, index) => {
         commit('COPY_MATERIAL', index);
+    },
+    changeFileName: ({commit}, fileName) => {
+        commit('CHANGE_FILENAME', fileName);
     }
 }
 
