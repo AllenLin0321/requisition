@@ -35,10 +35,6 @@ import MainDialog from "./MainDialog";
 
 import { mapGetters } from "vuex";
 
-// 3-party plugin to generate the pdf file
-import jsPDF from "jspdf";
-import jspdfAutotable from "jspdf-autotable";
-
 export default {
   data() {
     return {
@@ -72,18 +68,35 @@ export default {
   },
   methods: {
     downloadPDF() {
-      let pdfName = this.fileName;
-      var doc = new jsPDF("p", "pt");
+      var docDefinition = {
+        content: [
+          "這是第一個段落",
+          "這是第二個段落"
+        ],
+        defaultStyle: {
+          // 微軟正黑體
+          font: "myjh"
+        }
+      };
 
-      var columns = [
-        { title: "項目", dataKey: "item" },
-        { title: "數量", dataKey: "quantity" },
-        { title: "單位", dataKey: "unit" }
-      ];
+      pdfMake.fonts = {
+        Roboto: {
+          normal: "Roboto-Regular.ttf",
+          bold: "Roboto-Medium.ttf",
+          italics: "Roboto-Italic.ttf",
+          bolditalics: "Roboto-Italic.ttf"
+        },
+        /*这里是加入的微软雅黑字体*/
+        myjh: {
+          normal: "msjh.ttf",
+          bold: "msjh.ttf",
+          italics: "msjh.ttf",
+          bolditalics: "msjh.ttf"
+        }
+      };
 
-
-      doc.autoTable(columns, this.materials,);
-      doc.save(pdfName + ".pdf");
+      //Export the PDF
+      pdfMake.createPdf(docDefinition).download(this.fileName);
     }
   }
 };
