@@ -1,5 +1,15 @@
 <template>
   <v-container class="label">
-    <h1>This is an LABEL page</h1>
+    <LabelMain/>
   </v-container>
 </template>
+
+<script>
+import LabelMain from '@/components/label/LabelMain'
+export default {
+  components: {
+    LabelMain
+  }
+}
+</script>
+
