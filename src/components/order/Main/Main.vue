@@ -36,30 +36,8 @@ import MainDialog from "./MainDialog";
 import { mapGetters } from "vuex";
 
 export default {
-  data() {
-    return {
-      todos: [
-        {
-          title: "title 1",
-          description: "description 1"
-        },
-        {
-          title: "title 2",
-          description: "description 2"
-        },
-        {
-          title: "title 3",
-          description: "description 3"
-        },
-        {
-          title: "title 4",
-          description: "description 4"
-        }
-      ]
-    };
-  },
   computed: {
-    ...mapGetters(["materials", "fileName"])
+    ...mapGetters(["materials", "fileName", "header"])
   },
   components: {
     MainDialog,
@@ -68,16 +46,48 @@ export default {
   },
   methods: {
     downloadPDF() {
-      var docDefinition = {
+      let docDefinition = {
         content: [
-          "這是第一個段落",
-          "這是第二個段落"
+          {
+            layout: "lightHorizontalLines", // optional
+            table: {
+              // Declare how many rows should be treated as headers
+              headerRows: 1,
+              widths: ["auto", "*", "20%", "20%"],
+
+              // Table Header
+              body: [
+                [
+                  this.header.order,
+                  this.header.item,
+                  this.header.quantity,
+                  this.header.unit
+                ]
+              ]
+            },
+            style: "table"
+          }
         ],
+        styles: {
+          table: {
+            fontSize: 16,
+            bold: true
+          }
+        },
         defaultStyle: {
           // 微軟正黑體
           font: "myjh"
         }
       };
+
+      this.materials.forEach((element, index) => {
+        const data = [];
+        data.push(index + 1);
+        data.push(element.item);
+        data.push(element.quantity);
+        data.push(element.unit);
+        docDefinition.content[0].table.body.push(data);
+      });
 
       pdfMake.fonts = {
         Roboto: {
@@ -86,7 +96,6 @@ export default {
           italics: "Roboto-Italic.ttf",
           bolditalics: "Roboto-Italic.ttf"
         },
-        /*这里是加入的微软雅黑字体*/
         myjh: {
           normal: "msjh.ttf",
           bold: "msjh.ttf",
