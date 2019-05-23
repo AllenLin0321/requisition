@@ -18,11 +18,11 @@ const state = {
         {
             catelog_name: '電線類',
             subCatelog: [{
-                    subCatelog_name: '強力電線1',
+                    subCatelog_name: '強力電線',
                     labels: ['強力電線1', '強力電線2']
                 },
                 {
-                    subCatelog_name: '弱力電線2',
+                    subCatelog_name: '弱力電線',
                     labels: ['弱力電線1', '弱力電線2']
                 }
             ]
@@ -30,8 +30,7 @@ const state = {
         {
             catelog_name: '螺絲起子類',
             subCatelog: [{
-                    subCatelog_name: '十字螺絲起子',
-                    labels: ['M號 十字螺絲起子', 'S號 十字螺絲起子']
+                    subCatelog_name: '十字螺絲起子'
                 },
                 {
                     subCatelog_name: '一字螺絲起子',
@@ -46,8 +45,30 @@ const mutations = {
     // Add Main Catelog
     'ADD_MAIN_CATELOG'(state, mainCateLog) {
         const data = {}
-        data["catelog_name"] = mainCateLog;
+        data.catelog_name = mainCateLog;
         state.labels.push(data);
+    },
+    'ADD_SECOND_CATELOG'(state, data) {
+        const mainCateLog = data.selectedMainCatelog;
+        const secondCatelogData = data.newSubCatelogName;
+
+        for (let value of state.labels) {
+            if (value.hasOwnProperty('catelog_name') && value['catelog_name'] == mainCateLog) {
+                if (value.hasOwnProperty('subCatelog')) {
+                    const data = {
+                        subCatelog_name: secondCatelogData
+                    }
+                    value.subCatelog.push(data);
+                } else {
+                    const data = {
+                        subCatelog_name: secondCatelogData
+                    }
+                    value.subCatelog = []
+                    value.subCatelog.push(data);
+                }
+            }
+        }
+        state.labels=JSON.parse(JSON.stringify(state.labels));
     }
 }
 
@@ -81,6 +102,13 @@ const getters = {
             }
             return data;
         });
+    },
+    mainCatelog() {
+        let mainCatelog = [];
+        for (let value of state.labels) {
+            mainCatelog.push(value.catelog_name);
+        }
+        return mainCatelog;
     }
 }
 
@@ -89,6 +117,11 @@ const actions = {
         commit
     }, mainCateLog) => {
         commit('ADD_MAIN_CATELOG', mainCateLog);
+    },
+    add_second_catelog({
+        commit
+    }, data) {
+        commit('ADD_SECOND_CATELOG', data);
     }
 }
 
