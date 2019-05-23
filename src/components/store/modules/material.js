@@ -34,7 +34,6 @@ const mutations = {
     'UPDATE_UNIT'(state, data) {
         state.materials[data.index].unit = data.unit;
     }
-
 }
 
 const getters = {

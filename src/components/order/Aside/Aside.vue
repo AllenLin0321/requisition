@@ -15,7 +15,6 @@
         v-for="(catelog, index) in catelogs"
         :key="index"
         :catelog="catelog"/>
-
     </v-list>
   </v-navigation-drawer>
 </template>
