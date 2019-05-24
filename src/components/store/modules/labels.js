@@ -103,9 +103,6 @@ const mutations = {
         state.relatedSecondCatelog = data.relatedSecondCatelog;
 
         state.labels = JSON.parse(JSON.stringify(state.labels));
-    },
-    'ADD_LABEL'(state) {
-        state.labels = JSON.parse(JSON.stringify(state.labels));
     }
 }
 
@@ -181,24 +178,20 @@ const actions = {
 
                 if (value.hasOwnProperty('subCatelog')) {
                     for (let subCatelog of value.subCatelog) {
+
+                        // Check the Second Catelog
                         if (subCatelog.subCatelog_name == selectedSecondCatelog) {
-                            // Have labels Prop
-                            if (subCatelog.hasOwnProperty('labels')) {
-                                subCatelog.labels.push(newLabel);
-                                state.labels = JSON.parse(JSON.stringify(state.labels));
-                            } else {
-                                // Have no labels Prop
+                            // If there is no label in this Second Catelog
+                            if (!subCatelog.hasOwnProperty('labels')) {
                                 subCatelog.labels = [];
-                                subCatelog.labels.push(newLabel);
-                                state.labels = JSON.parse(JSON.stringify(state.labels));
                             }
+                            subCatelog.labels.push(newLabel);
+                            state.labels = JSON.parse(JSON.stringify(state.labels));
                         }
                     }
                 }
             }
         }
-        commit('ADD_LABEL');
-        commit('test');
     }
 }
 

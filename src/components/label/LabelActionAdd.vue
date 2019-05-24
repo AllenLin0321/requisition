@@ -10,25 +10,13 @@
     </template>
 
     <v-card>
-      <!-- Card Title -->
-      <!-- <v-card-title class="headline teal lighten-4" primary-title>新增主目錄名稱</v-card-title> -->
-
       <v-tabs centered color="cyan" dark icons-and-text @change="recordTab">
         <v-tabs-slider color="yellow"></v-tabs-slider>
 
-        <v-tab href="#tab-1">
-          主目錄
-          <v-icon>book</v-icon>
-        </v-tab>
-
-        <v-tab href="#tab-2">
-          次目錄
-          <v-icon>bookmarks</v-icon>
-        </v-tab>
-
-        <v-tab href="#tab-3">
-          標籤
-          <v-icon>bookmark</v-icon>
+        <!-- Tab Header -->
+        <v-tab v-for="(tab, index) in tabs" :key="index" :href="`#tab-${index+1}`">
+          {{tab.name}}
+          <v-icon>{{tab.icon}}</v-icon>
         </v-tab>
 
         <!-- Main Catelog -->
@@ -36,17 +24,7 @@
           <v-card flat>
             <!-- Card Content -->
             <v-card-text>
-              <v-container grid-list-md>
-                <v-layout wrap>
-                  <v-flex>
-                    <v-text-field
-                      label="主目錄名稱"
-                      v-model="newManCatelogName"
-                      @keyup.enter="addCatelog"
-                    ></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-container>
+              <v-text-field label="主目錄名稱" v-model="newManCatelogName" @keyup.enter="addCatelog"></v-text-field>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -55,24 +33,9 @@
         <v-tab-item value="tab-2">
           <v-card flat>
             <!-- Card Content -->
-            <v-card-text>
-              <v-container grid-list-md>
-                <v-layout wrap>
-                  <v-flex>
-                    <v-select
-                      :items="allMainCatelog"
-                      v-model="selectedMainCatelog"
-                      label="主目錄名稱"
-                      outline
-                    ></v-select>
-                    <v-text-field
-                      label="次目錄名稱"
-                      v-model="newSubCatelogName"
-                      @keyup.enter="addCatelog"
-                    ></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-container>
+            <v-card-text pa-5>
+              <v-select :items="allMainCatelog" v-model="selectedMainCatelog" label="主目錄名稱" outline></v-select>
+              <v-text-field label="次目錄名稱" v-model="newSubCatelogName" @keyup.enter="addCatelog"></v-text-field>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -82,25 +45,14 @@
           <v-card flat>
             <!-- Card Content -->
             <v-card-text>
-              <v-container grid-list-md>
-                <v-layout wrap>
-                  <v-flex>
-                    <v-select
-                      :items="allMainCatelog"
-                      v-model="selectedMainCatelog"
-                      label="主目錄名稱"
-                      outline
-                    ></v-select>
-                    <v-select
-                      :items="relatedSecondCatelog"
-                      v-model="selectedSecondCatelog"
-                      label="次目錄名稱"
-                      outline
-                    ></v-select>
-                    <v-text-field label="標籤名稱" v-model="newLabel" @keyup.enter="addCatelog"></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-container>
+              <v-select :items="allMainCatelog" v-model="selectedMainCatelog" label="主目錄名稱" outline></v-select>
+              <v-select
+                :items="relatedSecondCatelog"
+                v-model="selectedSecondCatelog"
+                label="次目錄名稱"
+                outline
+              ></v-select>
+              <v-text-field label="標籤名稱" v-model="newLabel" @keyup.enter="addCatelog"></v-text-field>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -128,6 +80,11 @@ import { mapActions } from "vuex";
 export default {
   data() {
     return {
+      tabs: [
+        { name: "主目錄", icon: "book" },
+        { name: "次目錄", icon: "bookmarks" },
+        { name: "標籤", icon: "bookmark" }
+      ],
       dialog: false,
       currentTab: "",
       selectedMainCatelog: "",
@@ -196,6 +153,8 @@ export default {
     recordTab(e) {
       // Recrod the current tab
       this.currentTab = e;
+
+      // Update the Second Catelog in Label Tab when changed the tab
       this.updateSecondCatelog();
     },
     updateSecondCatelog() {
@@ -212,3 +171,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.v-card__text {
+  padding: 35px;
+}
+</style>
