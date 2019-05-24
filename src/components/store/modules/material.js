@@ -5,10 +5,11 @@ const state = {
         item: "項目",
         quantity: "數量",
         unit: "單位",
+        note: "備註",
         action: "動作"
     },
     units: [
-        '個', '張', '捆', '捲'
+        '個', '張', '捆', '捲', '包', '組'
     ],
     fileName: '叫料單'
 }
@@ -33,6 +34,10 @@ const mutations = {
     // Update the unit
     'UPDATE_UNIT'(state, data) {
         state.materials[data.index].unit = data.unit;
+    },
+    // Update the note
+    'UPDATE_NOTE'(state, data) {
+        state.materials[data.index].note = data.note;
     }
 }
 
@@ -76,6 +81,11 @@ const actions = {
         commit
     }, data) => {
         commit('UPDATE_UNIT', data)
+    },
+    update_note: ({
+        commit
+    }, data) => {
+        commit('UPDATE_NOTE', data)
     }
 }
 

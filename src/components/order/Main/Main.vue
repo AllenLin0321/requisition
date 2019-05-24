@@ -53,7 +53,7 @@ export default {
             table: {
               // Declare how many rows should be treated as headers
               headerRows: 1,
-              widths: ["auto", "*", "20%", "20%"],
+              widths: ["auto", "*", "10%", "10%", "*"],
 
               // Table Header
               body: [
@@ -61,7 +61,8 @@ export default {
                   this.header.order,
                   this.header.item,
                   this.header.quantity,
-                  this.header.unit
+                  this.header.unit,
+                  this.header.note
                 ]
               ]
             },
@@ -86,6 +87,7 @@ export default {
         data.push(element.item);
         data.push(element.quantity);
         data.push(element.unit);
+        data.push(element.note ? element.note : " ");
         docDefinition.content[0].table.body.push(data);
       });
 
@@ -106,6 +108,7 @@ export default {
 
       //Export the PDF
       pdfMake.createPdf(docDefinition).download(this.fileName);
+      console.log(this.materials);
     }
   }
 };

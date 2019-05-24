@@ -109,6 +109,13 @@ const getters = {
             mainCatelog.push(value.catelog_name);
         }
         return mainCatelog;
+    },
+    secondCatelog() {
+        let secondCatelog = [];
+        // for (let value of state.labels) {
+        //     secondCatelog.push(value.catelog_name);
+        // }
+        return secondCatelog;
     }
 }
 

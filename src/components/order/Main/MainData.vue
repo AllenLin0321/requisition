@@ -4,7 +4,7 @@
     <v-flex xs1 class="order">{{ index + 1 }}</v-flex>
 
     <!-- 項目 -->
-    <v-flex xs4 class="item" id="item">{{ material.item }}</v-flex>
+    <v-flex xs3 class="item" id="item">{{ material.item }}</v-flex>
 
     <!-- 數量 -->
     <v-flex xs2 class="number" pr-4>
@@ -16,14 +16,18 @@
       <v-select :items="units" label="單位" :value="units[0]" attach @change="updateUnit"></v-select>
     </v-flex>
 
+    <!-- 備註 -->
+    <v-flex xs3 class="unit" pr-4 d-flex>
+      <v-textarea solo autofocus height="90" placeholder="備註" @change="updateNote"></v-textarea>
+    </v-flex>
+
     <!-- 動作 -->
-    <v-flex xs3 class="action">
+    <v-flex pl-4 class="action">
       <!-- Delete -->
       <v-btn flat icon color="indigo" @click="deleteMaterial(index)">
         <v-icon>delete</v-icon>
       </v-btn>
     </v-flex>
-
   </v-layout>
 </template>
 
@@ -47,6 +51,13 @@ export default {
         unit: element
       };
       this.$store.dispatch("update_unit", data);
+    },
+    updateNote(element) {
+      const data = {
+        index: this.index,
+        note: element
+      };
+      this.$store.dispatch("update_note", data);
     }
   },
   computed: {

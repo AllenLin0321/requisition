@@ -83,7 +83,12 @@
                       label="主目錄名稱"
                       outline
                     ></v-select>
-                    <v-select :items="mainCatelog" label="次目錄名稱" outline></v-select>
+                    <v-select
+                      :items="mainCatelog"
+                      v-model="selectedSecondCatelog"
+                      label="次目錄名稱"
+                      outline
+                    ></v-select>
                     <v-text-field label="標籤名稱" id="newLabel" @keyup.enter="addCatelog"></v-text-field>
                   </v-flex>
                 </v-layout>
@@ -117,7 +122,8 @@ export default {
     return {
       dialog: false,
       currentTab: "",
-      selectedMainCatelog: ""
+      selectedMainCatelog: "",
+      selectedSecondCatelog: ""
     };
   },
   computed: {
@@ -142,7 +148,7 @@ export default {
             const data = {
               selectedMainCatelog: this.selectedMainCatelog,
               newSubCatelogName: newSubCatelogName.value
-            }
+            };
             this.$store.dispatch("add_second_catelog", data);
           } else {
             alert("請輸入資料");
@@ -150,7 +156,6 @@ export default {
           break;
 
         case "tab-3":
-          console.log(this.selectedMainCatelog);
           break;
       }
 
