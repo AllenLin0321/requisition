@@ -93,7 +93,7 @@
                     ></v-select>
                     <v-select
                       :items="relatedSecondCatelog"
-                      v-model="selectedsecondCatelog"
+                      v-model="selectedSecondCatelog"
                       label="次目錄名稱"
                       outline
                     ></v-select>
@@ -134,7 +134,7 @@ export default {
       newManCatelogName: "",
       newSubCatelogName: "",
       newLabel: "",
-      selectedsecondCatelog: ""
+      selectedSecondCatelog: ""
     };
   },
   computed: {
@@ -167,7 +167,6 @@ export default {
               newSubCatelogName: this.newSubCatelogName
             };
             this.$store.dispatch("add_second_catelog", data);
-            console.log(this.$store.getters.labels);
             this.newSubCatelogName = "";
           } else {
             alert("請輸入資料");
@@ -179,11 +178,10 @@ export default {
           if (this.newLabel) {
             const data = {
               selectedMainCatelog: this.selectedMainCatelog,
-              selectedsecondCatelog: this.selectedsecondCatelog,
+              selectedSecondCatelog: this.selectedSecondCatelog,
               newLabel: this.newLabel
             };
-            // this.$store.dispatch("add_label", data);
-            console.log(data);
+            this.$store.dispatch("add_label", data);
             this.newLabel = "";
           } else {
             alert("請輸入資料");

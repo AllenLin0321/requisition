@@ -101,10 +101,12 @@ const mutations = {
 
         // The Second Catelog for the selected Main Catelog
         state.relatedSecondCatelog = data.relatedSecondCatelog;
+
+        state.labels = JSON.parse(JSON.stringify(state.labels));
     },
     'ADD_LABEL'(state) {
         state.labels = JSON.parse(JSON.stringify(state.labels));
-    },
+    }
 }
 
 const actions = {
@@ -169,21 +171,26 @@ const actions = {
     add_label({
         commit
     }, data) {
-        const mainCateLog = data.selectedMainCatelog;
-        const selectedsecondCatelog = data.selectedsecondCatelog;
-        const label = data.newLabel;
+        const selectedMainCatelog = data.selectedMainCatelog;
+        const selectedSecondCatelog = data.selectedSecondCatelog;
+        const newLabel = data.newLabel;
 
         for (let value of state.labels) {
-            if (value.hasOwnProperty('catelog_name') && value['catelog_name'] == mainCateLog) {
+            // Check the Main Catelog
+            if (value.hasOwnProperty('catelog_name') && value.catelog_name == selectedMainCatelog) {
+
                 if (value.hasOwnProperty('subCatelog')) {
                     for (let subCatelog of value.subCatelog) {
-                        if (subCatelog.subCatelog_name == selectedsecondCatelog) {
+                        if (subCatelog.subCatelog_name == selectedSecondCatelog) {
                             // Have labels Prop
                             if (subCatelog.hasOwnProperty('labels')) {
-                                subCatelog.labels.push(label);
+                                subCatelog.labels.push(newLabel);
+                                state.labels = JSON.parse(JSON.stringify(state.labels));
                             } else {
                                 // Have no labels Prop
-                                subCatelog.labels = label;
+                                subCatelog.labels = [];
+                                subCatelog.labels.push(newLabel);
+                                state.labels = JSON.parse(JSON.stringify(state.labels));
                             }
                         }
                     }
@@ -191,6 +198,7 @@ const actions = {
             }
         }
         commit('ADD_LABEL');
+        commit('test');
     }
 }
 
