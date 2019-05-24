@@ -38,38 +38,9 @@ const state = {
                 }
             ]
         }
-    ]
-}
-
-const mutations = {
-    // Add Main Catelog
-    'ADD_MAIN_CATELOG'(state, mainCateLog) {
-        const data = {}
-        data.catelog_name = mainCateLog;
-        state.labels.push(data);
-    },
-    'ADD_SECOND_CATELOG'(state, data) {
-        const mainCateLog = data.selectedMainCatelog;
-        const secondCatelogData = data.newSubCatelogName;
-
-        for (let value of state.labels) {
-            if (value.hasOwnProperty('catelog_name') && value['catelog_name'] == mainCateLog) {
-                if (value.hasOwnProperty('subCatelog')) {
-                    const data = {
-                        subCatelog_name: secondCatelogData
-                    }
-                    value.subCatelog.push(data);
-                } else {
-                    const data = {
-                        subCatelog_name: secondCatelogData
-                    }
-                    value.subCatelog = []
-                    value.subCatelog.push(data);
-                }
-            }
-        }
-        state.labels=JSON.parse(JSON.stringify(state.labels));
-    }
+    ],
+    selectedMainCatelog: "",
+    relatedSecondCatelog: ""
 }
 
 const getters = {
@@ -103,32 +74,123 @@ const getters = {
             return data;
         });
     },
-    mainCatelog() {
+    allMainCatelog() {
         let mainCatelog = [];
         for (let value of state.labels) {
             mainCatelog.push(value.catelog_name);
         }
         return mainCatelog;
     },
-    secondCatelog() {
-        let secondCatelog = [];
-        // for (let value of state.labels) {
-        //     secondCatelog.push(value.catelog_name);
-        // }
-        return secondCatelog;
+    relatedSecondCatelog() {
+        return state.relatedSecondCatelog;
     }
+}
+
+const mutations = {
+    // Add Main Catelog
+    'ADD_MAIN_CATELOG'(state, data) {
+        state.labels.push(data);
+        state.labels = JSON.parse(JSON.stringify(state.labels));
+    },
+    'ADD_SECOND_CATELOG'(state) {
+        state.labels = JSON.parse(JSON.stringify(state.labels));
+    },
+    "SET_SELECTED_MAIN_CATELOG"(state, data) {
+        // Save the selected Main Catelog
+        state.selectedMainCatelog = data.selectedMainCatelog;
+
+        // The Second Catelog for the selected Main Catelog
+        state.relatedSecondCatelog = data.relatedSecondCatelog;
+    },
+    'ADD_LABEL'(state) {
+        state.labels = JSON.parse(JSON.stringify(state.labels));
+    },
 }
 
 const actions = {
     add_main_catelog: ({
         commit
     }, mainCateLog) => {
-        commit('ADD_MAIN_CATELOG', mainCateLog);
+        const data = {}
+        data.catelog_name = mainCateLog;
+        commit('ADD_MAIN_CATELOG', data);
     },
     add_second_catelog({
         commit
     }, data) {
-        commit('ADD_SECOND_CATELOG', data);
+        const mainCateLog = data.selectedMainCatelog;
+        const secondCatelogData = data.newSubCatelogName;
+
+        for (let value of state.labels) {
+            if (value.hasOwnProperty('catelog_name') && value['catelog_name'] == mainCateLog) {
+                if (value.hasOwnProperty('subCatelog')) {
+                    const data = {
+                        subCatelog_name: secondCatelogData
+                    }
+                    value.subCatelog.push(data);
+                } else {
+                    const data = {
+                        subCatelog_name: secondCatelogData
+                    }
+                    value.subCatelog = [data];
+                }
+            }
+        }
+        commit('ADD_SECOND_CATELOG');
+    },
+    set_selected_main_catelog({
+        commit
+    }, data) {
+
+        // Store the Main Catelog and Second Catelog
+        const secondCatelog = [];
+
+        for (let value of state.labels) {
+            if (value.catelog_name == data) {
+                if (value.hasOwnProperty("subCatelog")) {
+                    for (let sub_value of value.subCatelog) {
+                        if (sub_value.hasOwnProperty("subCatelog_name")) {
+                            secondCatelog.push(sub_value.subCatelog_name);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Store into an object
+        const allData = {
+            selectedMainCatelog: data,
+            relatedSecondCatelog: secondCatelog
+        }
+
+        // Commit to mutation
+        commit('SET_SELECTED_MAIN_CATELOG', allData);
+    },
+    add_label({
+        commit
+    }, data) {
+        const mainCateLog = data.selectedMainCatelog;
+        const selectedsecondCatelog = data.selectedsecondCatelog;
+        const label = data.newLabel;
+
+        for (let value of state.labels) {
+            if (value.hasOwnProperty('catelog_name') && value['catelog_name'] == mainCateLog) {
+                if (value.hasOwnProperty('subCatelog')) {
+                    for (let subCatelog of value.subCatelog) {
+                        if (subCatelog.subCatelog_name == selectedsecondCatelog) {
+                            // Have labels Prop
+                            if (subCatelog.hasOwnProperty('labels')) {
+                                subCatelog.labels.push(label);
+                            } else {
+                                // Have no labels Prop
+                                subCatelog.labels = label;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        commit('ADD_LABEL');
     }
 }
 

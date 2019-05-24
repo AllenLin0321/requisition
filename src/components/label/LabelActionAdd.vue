@@ -39,7 +39,11 @@
               <v-container grid-list-md>
                 <v-layout wrap>
                   <v-flex>
-                    <v-text-field label="主目錄名稱" id="newCatelogName" @keyup.enter="addCatelog"></v-text-field>
+                    <v-text-field
+                      label="主目錄名稱"
+                      v-model="newManCatelogName"
+                      @keyup.enter="addCatelog"
+                    ></v-text-field>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -56,12 +60,16 @@
                 <v-layout wrap>
                   <v-flex>
                     <v-select
-                      :items="mainCatelog"
+                      :items="allMainCatelog"
                       v-model="selectedMainCatelog"
                       label="主目錄名稱"
                       outline
                     ></v-select>
-                    <v-text-field label="次目錄名稱" id="newSubCatelogName" @keyup.enter="addCatelog"></v-text-field>
+                    <v-text-field
+                      label="次目錄名稱"
+                      v-model="newSubCatelogName"
+                      @keyup.enter="addCatelog"
+                    ></v-text-field>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -78,18 +86,18 @@
                 <v-layout wrap>
                   <v-flex>
                     <v-select
-                      :items="mainCatelog"
+                      :items="allMainCatelog"
                       v-model="selectedMainCatelog"
                       label="主目錄名稱"
                       outline
                     ></v-select>
                     <v-select
-                      :items="mainCatelog"
-                      v-model="selectedSecondCatelog"
+                      :items="relatedSecondCatelog"
+                      v-model="selectedsecondCatelog"
                       label="次目錄名稱"
                       outline
                     ></v-select>
-                    <v-text-field label="標籤名稱" id="newLabel" @keyup.enter="addCatelog"></v-text-field>
+                    <v-text-field label="標籤名稱" v-model="newLabel" @keyup.enter="addCatelog"></v-text-field>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -123,20 +131,29 @@ export default {
       dialog: false,
       currentTab: "",
       selectedMainCatelog: "",
-      selectedSecondCatelog: ""
+      newManCatelogName: "",
+      newSubCatelogName: "",
+      newLabel: "",
+      selectedsecondCatelog: ""
     };
   },
   computed: {
-    ...mapGetters(["mainCatelog"])
+    ...mapGetters(["allMainCatelog", "relatedSecondCatelog"])
+  },
+  watch: {
+    selectedMainCatelog: function(value) {
+      this.updateSecondCatelog();
+    }
   },
   methods: {
+    // Add new Catelog ( Including: Main, Sub and Label)
     addCatelog() {
       switch (this.currentTab) {
         // Add Main Catelog
         case "tab-1":
-          if (newCatelogName.value) {
-            // this.add_main_catelog(newCatelogName.value);
-            this.$store.dispatch("add_main_catelog", newCatelogName.value);
+          if (this.newManCatelogName) {
+            this.$store.dispatch("add_main_catelog", this.newManCatelogName);
+            this.newManCatelogName = "";
           } else {
             alert("請輸入資料");
           }
@@ -144,26 +161,56 @@ export default {
 
         // Add Second Catelog
         case "tab-2":
-          if (newSubCatelogName.value) {
+          if (this.newSubCatelogName) {
             const data = {
               selectedMainCatelog: this.selectedMainCatelog,
-              newSubCatelogName: newSubCatelogName.value
+              newSubCatelogName: this.newSubCatelogName
             };
             this.$store.dispatch("add_second_catelog", data);
+            console.log(this.$store.getters.labels);
+            this.newSubCatelogName = "";
           } else {
             alert("請輸入資料");
           }
           break;
 
+        // Add Label
         case "tab-3":
+          if (this.newLabel) {
+            const data = {
+              selectedMainCatelog: this.selectedMainCatelog,
+              selectedsecondCatelog: this.selectedsecondCatelog,
+              newLabel: this.newLabel
+            };
+            // this.$store.dispatch("add_label", data);
+            console.log(data);
+            this.newLabel = "";
+          } else {
+            alert("請輸入資料");
+          }
+
           break;
       }
-
       this.dialog = false;
     },
+
+    // When the tab is changed
     recordTab(e) {
+      // Recrod the current tab
       this.currentTab = e;
+      this.updateSecondCatelog();
+    },
+    updateSecondCatelog() {
+      // Set the second Catelog
+      this.$store.dispatch(
+        "set_selected_main_catelog",
+        this.selectedMainCatelog
+      );
     }
+  },
+  created() {
+    this.selectedMainCatelog = this.allMainCatelog[0];
+    this.updateSecondCatelog();
   }
 };
 </script>
