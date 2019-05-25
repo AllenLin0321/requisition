@@ -103,6 +103,9 @@ const mutations = {
         state.relatedSecondCatelog = data.relatedSecondCatelog;
 
         state.labels = JSON.parse(JSON.stringify(state.labels));
+    },
+    "SET_DEFAULT_CATELOG" (state, data) {
+        state.labels = data;
     }
 }
 
@@ -192,6 +195,9 @@ const actions = {
                 }
             }
         }
+    },
+    set_default_catelog({commit}, data) {
+        commit('SET_DEFAULT_CATELOG', data);
     }
 }
 
