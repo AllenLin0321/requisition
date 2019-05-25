@@ -11,6 +11,8 @@
           <v-icon right dark>backup</v-icon>
         </v-btn>
 
+        <v-progress-circular indeterminate color="#1867C0" v-if="showUploadProgress"></v-progress-circular>
+
         <v-snackbar
           v-model="snackbar.show"
           bottom
@@ -25,7 +27,10 @@
     </v-layout>
 
     <!-- Data -->
-    <v-treeview :items="data" :open="open" open-on-click transition item-key="name">
+
+    <v-progress-circular indeterminate color="#1867C0" v-if="!showData"></v-progress-circular>
+
+    <v-treeview :items="data" :open="open" open-on-click transition item-key="name" v-if="showData">
       <template v-slot:append="{ item, open }">
         <div v-if="!open">
           <v-icon @click="alert">edit</v-icon>
@@ -38,7 +43,7 @@
 
 <script>
 import LabelActionAdd from "./LabelActionAdd";
-import { mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import { mapActions } from "vuex";
 import axios from "axios";
 
@@ -53,10 +58,12 @@ export default {
       text: "",
       timeout: 3000,
       color: ""
-    }
+    },
+    showUploadProgress: false,
+    showData: false
   }),
   computed: {
-    ...mapGetters(["data", "labels"])    
+    ...mapGetters(["data", "labels"])
   },
   methods: {
     ...mapActions(["set_default_catelog"]),
@@ -67,35 +74,44 @@ export default {
       alert(text);
     },
     saveAllCatelog() {
+      var vm = this
+      this.showUploadProgress=true;
       const formData = {
         allCatelog: this.labels
       };
       axios
-        .put ("/catelog.json", formData)
+        .put("/catelog.json", formData)
         .then(res => {
           console.log(res);
           this.snackbar.color = "#4CAF50";
           this.snackbar.text = "儲存成功!";
           this.snackbar.show = true;
+          vm.showUploadProgress=false;
         })
         .catch(error => {
           console.log(error);
           this.snackbar.color = "#FF5252";
           this.snackbar.text = "儲存失敗!";
           this.snackbar.show = true;
+          vm.showProgress=false;
         });
     }
   },
   created() {
     var vm = this;
-    axios.get('/catelog.json')
-      .then(res=> {
+    axios
+      .get("/catelog.json")
+      .then(res => {
         const data = res.data;
         if (data) {
           vm.set_default_catelog(data.allCatelog);
+          vm.showData = true;
         }
       })
-      .then(error => console.log(error))
+      .then(error => {
+        console.log(error);
+        vm.showData = true;
+      });
   }
 };
 </script>
