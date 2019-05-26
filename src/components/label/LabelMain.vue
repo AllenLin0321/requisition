@@ -74,7 +74,6 @@ export default {
       axios
         .put("/catelog.json", formData)
         .then(res => {
-          console.log(res);
           this.snackbar.color = "#4CAF50";
           this.snackbar.text = "儲存成功!";
           this.snackbar.show = true;

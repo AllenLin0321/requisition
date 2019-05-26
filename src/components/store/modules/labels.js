@@ -94,10 +94,10 @@ const mutations = {
     // Add Main Catelog
     'ADD_MAIN_CATELOG'(state, data) {
         state.labels.push(data);
-        state.labels = JSON.parse(JSON.stringify(state.labels));
+        resetLabels();
     },
     'ADD_SECOND_CATELOG'(state) {
-        state.labels = JSON.parse(JSON.stringify(state.labels));
+        resetLabels();
     },
     "SET_SELECTED_MAIN_CATELOG"(state, data) {
         // Save the selected Main Catelog
@@ -106,7 +106,7 @@ const mutations = {
         // The Second Catelog for the selected Main Catelog
         state.relatedSecondCatelog = data.relatedSecondCatelog;
 
-        state.labels = JSON.parse(JSON.stringify(state.labels));
+        resetLabels();
     },
     "SET_DEFAULT_CATELOG"(state, data) {
         state.labels = data;
@@ -196,7 +196,7 @@ const actions = {
                                 subCatelog.labels = [];
                             }
                             subCatelog.labels.push(newLabel);
-                            state.labels = JSON.parse(JSON.stringify(state.labels));
+                            resetLabels();
                         }
                     }
                 }
@@ -271,7 +271,38 @@ const actions = {
                 }
             }
         }
+    },
+    update_catelog({
+        commit
+    }, newCatelogName) {
+        // [mainCatelogIndex, secondCatelogIndex, labelIndex]
+        const index = state.selectedIndex;
+        const catelog = state.labels;
+        if (index.length > 0) {
+            switch (index.length) {
+                // On the main Catelog
+                case (1): {
+                    catelog[index[0]].catelog_name = newCatelogName;
+                    break;
+                }
+                // On the second Catelog
+                case (2): {
+                    catelog[index[0]].subCatelog[index[1]].subCatelog_name = newCatelogName;
+                    break;
+                }
+                // On the Label  !!!!!!HAVE BUG!!!!!!
+                case (3): {
+                    catelog[index[0]].subCatelog[index[1]].labels[index[2]] = newCatelogName;
+                    resetLabels();
+                    break;
+                }
+            }
+        }
     }
+}
+
+var resetLabels = () => {
+    state.labels = JSON.parse(JSON.stringify(state.labels));
 }
 
 export default {

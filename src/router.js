@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
 
 Vue.use(Router)
 
@@ -10,8 +9,11 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      name: 'order',
+      // route level code-splitting
+      // this generates a separate chunk (label.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ './views/Order.vue')
     },
     {
       path: '/label',
@@ -20,14 +22,6 @@ export default new Router({
       // this generates a separate chunk (label.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/Label.vue')
-    },
-    {
-      path: '/order',
-      name: 'order',
-      // route level code-splitting
-      // this generates a separate chunk (label.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Order.vue')
     }
   ]
 })
