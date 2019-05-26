@@ -40,7 +40,8 @@ const state = {
         }
     ],
     selectedMainCatelog: "",
-    relatedSecondCatelog: ""
+    relatedSecondCatelog: "",
+    selectedIndex: []
 }
 
 const getters = {
@@ -83,6 +84,9 @@ const getters = {
     },
     relatedSecondCatelog() {
         return state.relatedSecondCatelog;
+    },
+    selectedIndex() {
+        return state.selectedIndex;
     }
 }
 
@@ -104,8 +108,11 @@ const mutations = {
 
         state.labels = JSON.parse(JSON.stringify(state.labels));
     },
-    "SET_DEFAULT_CATELOG" (state, data) {
+    "SET_DEFAULT_CATELOG"(state, data) {
         state.labels = data;
+    },
+    "SET_SELECTED_INDEX"(state, data) {
+        state.selectedIndex = data;
     }
 }
 
@@ -196,8 +203,74 @@ const actions = {
             }
         }
     },
-    set_default_catelog({commit}, data) {
+    set_default_catelog({
+        commit
+    }, data) {
         commit('SET_DEFAULT_CATELOG', data);
+    },
+    set_selected_index({
+        commit
+    }, data) {
+        // [mainCatelogIndex, secondCatelogIndex, labelIndex]
+        const selectedindex = [];
+
+        state.labels.forEach((mainCatelog, first_index) => {
+
+            // If it's a main Catelog
+            if (mainCatelog.hasOwnProperty('catelog_name') && mainCatelog.catelog_name == data) {
+                selectedindex.push(first_index);
+            } else {
+                // Check if there are Sub Catelog
+                if (mainCatelog.hasOwnProperty('subCatelog')) {
+                    // Not on the main Catelog and Loop second Catelog
+                    mainCatelog.subCatelog.forEach((secondCatelog, second_index) => {
+
+                        // Check if it's second Catelog
+                        if (secondCatelog.hasOwnProperty('subCatelog_name') && secondCatelog.subCatelog_name == data) {
+                            selectedindex.push(first_index, second_index);
+                        } else {
+                            // check if there are labels
+                            if (secondCatelog.hasOwnProperty('labels')) {
+                                // Not on the second Catelog and loop lables 
+                                secondCatelog.labels.forEach((label, label_index) => {
+                                    if (label == data) {
+                                        selectedindex.push(first_index, second_index, label_index);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+
+        });
+        commit('SET_SELECTED_INDEX', selectedindex);
+    },
+    delete_catelog({
+        commit
+    }) {
+        // [mainCatelogIndex, secondCatelogIndex, labelIndex]
+        const index = state.selectedIndex;
+        const catelog = state.labels;
+        if (index.length > 0) {
+            switch (index.length) {
+                // On the main Catelog
+                case (1): {
+                    catelog.splice(index[0], 1);
+                    break;
+                }
+                // On the second Catelog
+                case (2): {
+                    catelog[index[0]].subCatelog.splice(index[1], 1);
+                    break;
+                }
+                // On the Label
+                case (3): {
+                    catelog[index[0]].subCatelog[index[1]].labels.splice(index[2], 1);
+                    break;
+                }
+            }
+        }
     }
 }
 

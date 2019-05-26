@@ -6,13 +6,15 @@
         <!-- Add Catelog -->
         <LabelActionAdd/>
 
-        <v-btn color="teal lighten-2" class="white--text" @click="saveAllCatelog">
+        <v-btn color="teal lighten-2" class="white--text" @click="uploadCatelog">
           儲存目錄
           <v-icon right dark>backup</v-icon>
         </v-btn>
 
+        <!-- Show Progree circle when uploading the data to firebase -->
         <v-progress-circular indeterminate color="#1867C0" v-if="showUploadProgress"></v-progress-circular>
 
+        <!-- Notification on the left bottom -->
         <v-snackbar
           v-model="snackbar.show"
           bottom
@@ -23,25 +25,19 @@
           {{ snackbar.text }}
           <v-btn dark flat @click="snackbar = false">Close</v-btn>
         </v-snackbar>
+        
       </v-flex>
     </v-layout>
 
     <!-- Data -->
-
     <v-progress-circular indeterminate color="#1867C0" v-if="!showData"></v-progress-circular>
+    <LabelData v-if="showData" />
 
-    <v-treeview :items="data" :open="open" open-on-click transition item-key="name" v-if="showData">
-      <template v-slot:append="{ item, open }">
-        <div v-if="!open">
-          <v-icon @click="alert">edit</v-icon>
-          <v-icon @click="alert">delete</v-icon>
-        </div>
-      </template>
-    </v-treeview>
   </v-container>
 </template>
 
 <script>
+import LabelData from './LabelData';
 import LabelActionAdd from "./LabelActionAdd";
 import { mapGetters } from "vuex";
 import { mapActions } from "vuex";
@@ -49,10 +45,10 @@ import axios from "axios";
 
 export default {
   components: {
-    LabelActionAdd
+    LabelActionAdd,
+    LabelData
   },
   data: () => ({
-    open: ["public"],
     snackbar: {
       show: false,
       text: "",
@@ -67,13 +63,9 @@ export default {
   },
   methods: {
     ...mapActions(["set_default_catelog"]),
-    alert(element) {
-      const text = element.toElement.parentElement.parentElement.getElementsByTagName(
-        "div"
-      )[0].innerHTML;
-      alert(text);
-    },
-    saveAllCatelog() {
+
+    // Upload the Catelog to firebase
+    uploadCatelog() {
       var vm = this
       this.showUploadProgress=true;
       const formData = {
@@ -98,12 +90,14 @@ export default {
     }
   },
   created() {
+    // Download the catelog from Firebase
     var vm = this;
     axios
       .get("/catelog.json")
       .then(res => {
         const data = res.data;
         if (data) {
+          // Upload the new Catelog to vuex
           vm.set_default_catelog(data.allCatelog);
           vm.showData = true;
         }
@@ -117,10 +111,5 @@ export default {
 </script>
 
 
-<style lang="scss">
-.v-treeview-node__label {
-  margin-right: 1rem;
-  flex-grow: initial !important;
-}
-</style>
+
 
