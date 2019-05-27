@@ -1,10 +1,10 @@
 <template>
     <v-container fluid>
         <v-layout row wrap>
-            <v-flex xs3 pr-3>
+            <v-flex xs12 md3 pr-3>
                 <Aside/>
             </v-flex>
-            <v-flex xs9>
+            <v-flex xs12 md9>
                 <v-card>
                     <Main/>
                 </v-card>

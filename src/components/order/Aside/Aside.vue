@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer stateless value="true">
+  <v-navigation-drawer stateless value="true" clipped>
     <v-list>
       <!-- Title -->
       <v-toolbar flat>
