@@ -1,34 +1,43 @@
 <template>
-  <v-layout row class="data" align-center px-3 pt-3 data-app>
-    <!-- 流水號 -->
-    <v-flex xs1 class="order">{{ index + 1 }}</v-flex>
+  <v-container grid-list-xl pa-3>
+    <v-layout class="data" align-center row wrap>
+      <!-- 流水號 -->
+      <v-flex xs6 sm4 md1 class="order">{{ index + 1 }}</v-flex>
 
-    <!-- 項目 -->
-    <v-flex xs3 class="item" id="item">{{ material.item }}</v-flex>
+      <!-- 項目 -->
+      <v-flex xs6 sm4 md2 class="item" id="item">{{ material.item }}</v-flex>
 
-    <!-- 數量 -->
-    <v-flex xs2 class="number" pr-4>
-      <v-text-field type="number" class="inputPrice" value="1" label="數量" @change="updateQuantity"></v-text-field>
-    </v-flex>
+      <!-- 數量 -->
+      <v-flex xs12 sm4 md3 class="number">
+        <v-text-field
+          type="number"
+          class="inputPrice"
+          value="1"
+          label="數量"
+          @change="updateQuantity"
+        ></v-text-field>
+      </v-flex>
 
-    <!-- 單位 -->
-    <v-flex xs2 class="unit" pr-4 d-flex>
-      <v-select :items="units" label="單位" :value="units[0]" attach @change="updateUnit"></v-select>
-    </v-flex>
+      <!-- 單位 -->
+      <v-flex xs12 sm4 md2 class="unit">
+        <v-select :items="units" label="單位" :value="units[0]" attach @change="updateUnit"></v-select>
+      </v-flex>
 
-    <!-- 備註 -->
-    <v-flex xs3 class="unit" pr-4 d-flex>
-      <v-textarea solo autofocus height="90" placeholder="備註" @change="updateNote"></v-textarea>
-    </v-flex>
+      <!-- 備註 -->
+      <v-flex xs11 sm7 md3 class="unit">
+        <v-textarea solo autofocus height="90" placeholder="備註" @change="updateNote"></v-textarea>
+      </v-flex>
 
-    <!-- 動作 -->
-    <v-flex pl-4 class="action">
-      <!-- Delete -->
-      <v-btn flat icon color="indigo" @click="deleteMaterial(index)">
-        <v-icon>delete</v-icon>
-      </v-btn>
-    </v-flex>
-  </v-layout>
+      <!-- 動作 -->
+      <v-flex xs1 sm1 class="action" pa-0>
+        <!-- Delete -->
+        <v-btn flat icon color="indigo" @click="deleteMaterial(index)">
+          <v-icon>delete</v-icon>
+        </v-btn>
+      </v-flex>
+
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

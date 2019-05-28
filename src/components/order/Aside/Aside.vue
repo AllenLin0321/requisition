@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer stateless value="true" clipped>
+  <v-navigation-drawer stateless value="true" clipped :class="{'navigation-drawer-sm':$vuetify.breakpoint.smAndDown}">
     <v-list>
       <!-- Title -->
       <v-toolbar flat>
@@ -33,3 +33,9 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+.navigation-drawer-sm {
+  width: auto !important;
+}
+</style>

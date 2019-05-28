@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <v-layout row wrap>
-            <v-flex xs12 sm12 md3 >
+            <v-flex xs12 sm12 md3 :class="{'aside-sm':$vuetify.breakpoint.smAndDown}">
                 <Aside/>
             </v-flex>
             <v-flex xs12 sm12 md9>
@@ -23,3 +23,9 @@
         }
     }
 </script>
+
+<style scoped>
+.aside-sm {
+    margin-bottom: 30px;
+}
+</style>

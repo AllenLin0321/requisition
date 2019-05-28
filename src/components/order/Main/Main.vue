@@ -10,7 +10,7 @@
       <v-spacer></v-spacer>
 
       <!-- Download the pdf file -->
-      <v-btn fab dark color="pink" @click="downloadPDF">
+      <v-btn fab dark color="pink" @click="downloadPDF" :small="$vuetify.breakpoint.smAndDown">
         <v-icon dark>cloud_download</v-icon>
       </v-btn>
     </v-layout>
