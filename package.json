@@ -7,7 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "core-js": "^2.6.9",
     "vue": "^2.6.10",
     "vue-draggable-nested-tree": "^2.2.17",
