@@ -1,0 +1,17 @@
+* {
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+}
+
+body {
+  background-color: $bg-dark;
+}
+.slide {
+  &-enter-active {
+    animation: slide-in 200ms ease-out forwards;
+  }
+
+  &-leave-active {
+    animation: slide-out 200ms ease-out forwards;
+  }
+}
