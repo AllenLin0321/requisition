@@ -5,7 +5,7 @@
       <v-toolbar-title>{{ fileName }}</v-toolbar-title>
 
       <!-- Change the file Name if clcck the EDIT -->
-      <MainDialog />
+      <ListDialog />
 
       <v-spacer></v-spacer>
 
@@ -22,33 +22,43 @@
     </v-layout>
 
     <!-- Data Header -->
-    <MainHeader></MainHeader>
+    <ListHeader></ListHeader>
 
     <!-- Data -->
-    <MainData
+    <ListData
       v-for="(material, index) in materials"
       :key="index"
       :material="material"
       :index="index"
-    ></MainData>
+    ></ListData>
   </v-container>
 </template>
 
 <script>
-import MainHeader from './MainHeader';
-import MainData from './MainData';
-import MainDialog from './MainDialog';
+import ListHeader from './ListHeader';
+import ListData from './ListData';
+import ListDialog from './ListDialog';
 
 import { mapGetters } from 'vuex';
 
 export default {
+  data: () => ({
+    header: {
+      order: '#',
+      item: '項目',
+      quantity: '數量',
+      unit: '單位',
+      note: '備註',
+      action: '動作',
+    },
+  }),
   computed: {
-    ...mapGetters(['materials', 'fileName', 'header']),
+    ...mapGetters(['materials', 'fileName']),
   },
   components: {
-    MainDialog,
-    MainHeader,
-    MainData,
+    ListDialog,
+    ListHeader,
+    ListData,
   },
   methods: {
     onDownloadPDF() {
@@ -119,8 +129,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.v-card {
-}
-</style>

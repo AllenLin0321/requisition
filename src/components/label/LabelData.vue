@@ -1,6 +1,13 @@
 <template>
   <div>
-    <v-treeview :items="data" :open="open" open-on-click transition item-key="name">
+    <v-treeview
+      :items="data"
+      :open="open"
+      open-on-click
+      transition
+      dark
+      item-key="name"
+    >
       <template v-slot:append="{ item, open }">
         <div v-if="!open">
           <v-icon @click.stop="getData">edit</v-icon>
@@ -17,27 +24,26 @@
   </div>
 </template>
 
-
 <script>
-import { mapGetters } from "vuex";
-import { mapActions } from "vuex";
-import LabelUpdateDialog from "./LabelUpdateDialog";
+import { mapGetters, mapActions, mapState } from 'vuex';
+import LabelUpdateDialog from './LabelUpdateDialog';
 export default {
   components: {
-    LabelUpdateDialog
+    LabelUpdateDialog,
   },
   data() {
     return {
       dialog: false,
-      open: ["public"],
-      selectedContent: ""
+      open: ['public'],
+      selectedContent: '',
     };
   },
   computed: {
-    ...mapGetters(["data", "selectedIndex"])
+    ...mapState({ selectedIndex: ({ labels }) => labels.selectedIndex }),
+    ...mapGetters(['data']),
   },
   methods: {
-    ...mapActions(["set_selected_index", "delete_catelog", "update_catelog"]),
+    ...mapActions(['setSelectedIndex', 'deleteCatelog', 'updateCatelog']),
 
     // Open the dialog and get the new Catelog Name
     getData(element) {
@@ -54,27 +60,27 @@ export default {
     // Update the new Catelog Name
     uploadCatelog(newCatelogName) {
       // Update the catelog
-      this.update_catelog(newCatelogName);
+      this.updateCatelog(newCatelogName);
     },
     // Delete the Catelog
     deleteCatelog(element) {
       const content = this.getContent(element);
       // Set the selectedIndex in vuex
       this.findIndex(content);
-      this.delete_catelog();
+      this.deleteCatelog();
     },
     // Find the index for the selected Catelog and store in the vuex
     findIndex(content) {
-      this.set_selected_index(content);
+      this.setSelectedIndex(content);
     },
     // Get the content when click the icon
     getContent(element) {
       const text = element.toElement.parentElement.parentElement.getElementsByTagName(
-        "div"
+        'div'
       )[0].innerHTML;
       return text;
-    }
-  }
+    },
+  },
 };
 </script>
 

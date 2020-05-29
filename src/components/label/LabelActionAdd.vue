@@ -14,9 +14,13 @@
         <v-tabs-slider color="yellow"></v-tabs-slider>
 
         <!-- Tab Header -->
-        <v-tab v-for="(tab, index) in tabs" :key="index" :href="`#tab-${index+1}`">
-          {{tab.name}}
-          <v-icon>{{tab.icon}}</v-icon>
+        <v-tab
+          v-for="(tab, index) in tabs"
+          :key="index"
+          :href="`#tab-${index + 1}`"
+        >
+          {{ tab.name }}
+          <v-icon>{{ tab.icon }}</v-icon>
         </v-tab>
 
         <!-- Main Catelog -->
@@ -24,7 +28,11 @@
           <v-card flat>
             <!-- Card Content -->
             <v-card-text>
-              <v-text-field label="主目錄名稱" v-model="newManCatelogName" @keyup.enter="addCatelog"></v-text-field>
+              <v-text-field
+                label="主目錄名稱"
+                v-model="newManCatelogName"
+                @keyup.enter="addCatelog"
+              ></v-text-field>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -34,8 +42,17 @@
           <v-card flat>
             <!-- Card Content -->
             <v-card-text pa-5>
-              <v-select :items="allMainCatelog" v-model="selectedMainCatelog" label="主目錄名稱" outline></v-select>
-              <v-text-field label="次目錄名稱" v-model="newSubCatelogName" @keyup.enter="addCatelog"></v-text-field>
+              <v-select
+                :items="allMainCatelog"
+                v-model="selectedMainCatelog"
+                label="主目錄名稱"
+                outline
+              ></v-select>
+              <v-text-field
+                label="次目錄名稱"
+                v-model="newSubCatelogName"
+                @keyup.enter="addCatelog"
+              ></v-text-field>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -45,20 +62,29 @@
           <v-card flat>
             <!-- Card Content -->
             <v-card-text>
-              <v-select :items="allMainCatelog" v-model="selectedMainCatelog" label="主目錄名稱" outline></v-select>
+              <v-select
+                :items="allMainCatelog"
+                v-model="selectedMainCatelog"
+                label="主目錄名稱"
+                outline
+              ></v-select>
               <v-select
                 :items="relatedSecondCatelog"
                 v-model="selectedSecondCatelog"
                 label="次目錄名稱"
                 outline
               ></v-select>
-              <v-text-field label="標籤名稱" v-model="newLabel" @keyup.enter="addCatelog"></v-text-field>
+              <v-text-field
+                label="標籤名稱"
+                v-model="newLabel"
+                @keyup.enter="addCatelog"
+              ></v-text-field>
             </v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs>
 
-      <v-divider/>
+      <v-divider />
 
       <!-- Card Action -->
       <v-card-actions>
@@ -75,73 +101,77 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { mapActions } from "vuex";
+import { mapGetters, mapActions, mapState } from 'vuex';
 export default {
   data() {
     return {
       tabs: [
-        { name: "主目錄", icon: "book" },
-        { name: "次目錄", icon: "bookmarks" },
-        { name: "標籤", icon: "bookmark" }
+        { name: '主目錄', icon: 'book' },
+        { name: '次目錄', icon: 'bookmarks' },
+        { name: '標籤', icon: 'bookmark' },
       ],
       dialog: false,
-      currentTab: "",
-      selectedMainCatelog: "",
-      newManCatelogName: "",
-      newSubCatelogName: "",
-      newLabel: "",
-      selectedSecondCatelog: ""
+      currentTab: '',
+      selectedMainCatelog: '',
+      newManCatelogName: '',
+      newSubCatelogName: '',
+      newLabel: '',
+      selectedSecondCatelog: '',
     };
   },
   computed: {
-    ...mapGetters(["allMainCatelog", "relatedSecondCatelog"])
+    ...mapState({
+      relatedSecondCatelog: ({ labels }) => {
+        return labels.relatedSecondCatelog;
+      },
+    }),
+    ...mapGetters(['allMainCatelog']),
   },
   watch: {
     selectedMainCatelog: function(value) {
       this.updateSecondCatelog();
-    }
+    },
   },
   methods: {
     // Add new Catelog ( Including: Main, Sub and Label)
     addCatelog() {
       switch (this.currentTab) {
         // Add Main Catelog
-        case "tab-1":
+        case 'tab-1':
           if (this.newManCatelogName) {
-            this.$store.dispatch("add_main_catelog", this.newManCatelogName);
-            this.newManCatelogName = "";
+            this.$store.dispatch('addMainCatelog', this.newManCatelogName);
+            this.newManCatelogName = '';
           } else {
-            alert("請輸入資料");
+            alert('請輸入資料');
           }
           break;
 
         // Add Second Catelog
-        case "tab-2":
+        case 'tab-2':
           if (this.newSubCatelogName) {
             const data = {
               selectedMainCatelog: this.selectedMainCatelog,
-              newSubCatelogName: this.newSubCatelogName
+              newSubCatelogName: this.newSubCatelogName,
             };
-            this.$store.dispatch("add_second_catelog", data);
-            this.newSubCatelogName = "";
+            this.$store.dispatch('addSecondCatelog', data);
+            this.newSubCatelogName = '';
           } else {
-            alert("請輸入資料");
+            alert('請輸入資料');
           }
           break;
 
         // Add Label
-        case "tab-3":
+        case 'tab-3':
           if (this.newLabel) {
             const data = {
               selectedMainCatelog: this.selectedMainCatelog,
               selectedSecondCatelog: this.selectedSecondCatelog,
-              newLabel: this.newLabel
+              newLabel: this.newLabel,
             };
-            this.$store.dispatch("add_label", data);
-            this.newLabel = "";
+            this.$store.dispatch('addLabel', data);
+            this.newLabel = '';
           } else {
-            alert("請輸入資料");
+            alert('請輸入資料');
           }
 
           break;
@@ -159,16 +189,13 @@ export default {
     },
     updateSecondCatelog() {
       // Set the second Catelog
-      this.$store.dispatch(
-        "set_selected_main_catelog",
-        this.selectedMainCatelog
-      );
-    }
+      this.$store.dispatch('setSelectedMainCatelog', this.selectedMainCatelog);
+    },
   },
   created() {
     this.selectedMainCatelog = this.allMainCatelog[0];
     this.updateSecondCatelog();
-  }
+  },
 };
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header></Header>
+    <AppHeader />
     <transition name="slide" mode="out-in">
       <router-view></router-view>
     </transition>
@@ -9,36 +9,12 @@
 
 <script>
 import '@/assets/css/app.scss';
-import Header from './components/Header';
+import AppHeader from './layout/AppHeader';
 
 export default {
   name: 'App',
   components: {
-    Header,
+    AppHeader,
   },
 };
 </script>
-
-<style lang="scss">
-@keyframes slide-in {
-  from {
-    transform: translateY(-30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-out {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-30px);
-    opacity: 0;
-  }
-}
-</style>

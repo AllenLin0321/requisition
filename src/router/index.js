@@ -11,13 +11,13 @@ export default new Router({
       path: '/',
       name: 'order',
       component: () =>
-        import(/* webpackChunkName: "about" */ './views/OrderPage.vue'),
+        import(/* webpackChunkName: "about" */ '../pages/OrderPage.vue'),
     },
     {
       path: '/label',
       name: 'label',
       component: () =>
-        import(/* webpackChunkName: "about" */ './views/LabelPage.vue'),
+        import(/* webpackChunkName: "about" */ '../pages/LabelPage.vue'),
     },
   ],
 });

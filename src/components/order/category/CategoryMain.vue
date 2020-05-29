@@ -18,8 +18,8 @@
       </v-toolbar>
 
       <!-- Label -->
-      <AsideMain
-        v-for="(catelog, index) in catelogs"
+      <CategoryList
+        v-for="(catelog, index) in labels"
         :key="index"
         :catelog="catelog"
       />
@@ -28,16 +28,18 @@
 </template>
 
 <script>
-import AsideMain from './AsideMain';
-
+import CategoryList from './CategoryList';
+import { mapState } from 'vuex';
 export default {
-  data() {
-    return {
-      catelogs: this.$store.getters.labels,
-    };
+  computed: {
+    ...mapState({
+      labels: state => {
+        return state.labels.labels;
+      },
+    }),
   },
   components: {
-    AsideMain,
+    CategoryList,
   },
 };
 </script>
