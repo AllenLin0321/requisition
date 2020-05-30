@@ -1,200 +1,103 @@
 import axios from 'axios';
+import * as types from '../mutation-types';
 
 const state = {
+  mainCategories: [],
+  subCategories: [],
   labels: [],
-  selectedMainCatelog: '',
-  relatedSecondCatelog: '',
-  selectedIndex: [],
 };
 
 const getters = {
-  // Transform the labels array to TreeView Format
-  data() {
-    const labels = state.labels;
-    return labels.map(element => {
-      const data = {};
-      data.name = element.catelog_name;
+  /**
+   *  取得所有分類並依照 {name,children} 為Objecy Key
+   */
+  getCategory() {
+    if (state.mainCategories.length === 0) return [];
 
-      // If there is subCatelog
-      if (element.hasOwnProperty('subCatelog')) {
-        data.children = element.subCatelog.map(subElement => {
-          const subData = {};
-          subData.name = subElement.subCatelog_name;
-
-          // If there are labels
-          if (subElement.hasOwnProperty('labels')) {
-            subData.children = subElement.labels.map(label => {
-              const labelData = {};
-              labelData.name = label;
-              return labelData;
-            });
-          }
-          return subData;
-        });
-      }
-      return data;
+    const mergedSub = state.subCategories.map(sub => {
+      return {
+        name: sub.name,
+        parent: sub.parent,
+        children: state.labels.filter(label => label.parent === sub.index),
+      };
     });
-  },
-  allMainCatelog() {
-    return state.labels.map(label => label.catelog_name);
+
+    return state.mainCategories.map(main => {
+      return {
+        name: main.name,
+        children: mergedSub.filter(sub => sub.parent === main.index),
+      };
+    });
   },
 };
 
 const mutations = {
-  // Add Main Catelog
-  ADD_MAIN_CATELOG(state, data) {
-    state.labels.push(data);
-    resetLabels();
+  // 添加主分類
+  [types.ADD_MAIN_CATELOG](state, newManCategoryName) {
+    const index =
+      state.mainCategories.length === 0
+        ? 0
+        : state.mainCategories[state.mainCategories.length - 1].index + 1;
+    state.mainCategories.push({ index, name: newManCategoryName });
+    this.dispatch('uploadCatelog');
   },
-  ADD_SECOND_CATELOG(state) {
-    resetLabels();
-  },
-  SET_SELECTED_MAIN_CATELOG(state, data) {
-    // Save the selected Main Catelog
-    state.selectedMainCatelog = data.selectedMainCatelog;
 
-    // The Second Catelog for the selected Main Catelog
-    state.relatedSecondCatelog = data.relatedSecondCatelog;
+  // 添加次分類
+  [types.ADD_SECOND_CATELOG](
+    state,
+    { selectedMainCategory, newSubCatelogName }
+  ) {
+    const index =
+      state.subCategories.length === 0
+        ? 0
+        : state.subCategories[state.subCategories.length - 1].index + 1;
+    state.subCategories.push({
+      index, // 次分類編號
+      name: newSubCatelogName,
+      parent: selectedMainCategory, // 關聯的主分類編號
+    });
+    this.dispatch('uploadCatelog');
+  },
 
-    resetLabels();
+  // 添加標籤
+  [types.ADD_LABEL](state, { selectedSubCategory, newLabel }) {
+    const index =
+      state.labels.length === 0
+        ? 0
+        : state.labels[state.labels.length - 1].index + 1;
+    state.labels.push({ index, name: newLabel, parent: selectedSubCategory });
+    this.dispatch('uploadCatelog');
   },
-  SET_DEFAULT_CATELOG(state, data) {
-    state.labels = data;
-  },
-  SET_SELECTED_INDEX(state, data) {
-    state.selectedIndex = data;
+
+  // 預設分類
+  [types.SET_DEFAULT_CATELOG](
+    state,
+    { mainCategories, subCategories, labels }
+  ) {
+    state.mainCategories = mainCategories;
+    state.subCategories = subCategories;
+    state.labels = labels;
   },
 };
 
 const actions = {
   fetchCatelog: async ({ commit }) => {
-    const { data } = await axios.get('/catelog.json');
-    commit('SET_DEFAULT_CATELOG', data.allCatelog);
-  },
-
-  addMainCatelog: ({ commit }, mainCateLog) => {
-    const data = {};
-    data.catelog_name = mainCateLog;
-    commit('ADD_MAIN_CATELOG', data);
-  },
-  addSecondCatelog({ commit }, data) {
-    const mainCateLog = data.selectedMainCatelog;
-    const secondCatelogData = data.newSubCatelogName;
-
-    for (let value of state.labels) {
-      if (
-        value.hasOwnProperty('catelog_name') &&
-        value['catelog_name'] == mainCateLog
-      ) {
-        if (value.hasOwnProperty('subCatelog')) {
-          const data = {
-            subCatelog_name: secondCatelogData,
-          };
-          value.subCatelog.push(data);
-        } else {
-          const data = {
-            subCatelog_name: secondCatelogData,
-          };
-          value.subCatelog = [data];
-        }
-      }
-    }
-    commit('ADD_SECOND_CATELOG');
-  },
-  setSelectedMainCatelog({ commit }, data) {
-    // Store the Main Catelog and Second Catelog
-    const secondCatelog = [];
-
-    for (let value of state.labels) {
-      if (value.catelog_name == data) {
-        if (value.hasOwnProperty('subCatelog')) {
-          for (let sub_value of value.subCatelog) {
-            if (sub_value.hasOwnProperty('subCatelog_name')) {
-              secondCatelog.push(sub_value.subCatelog_name);
-            }
-          }
-        }
-      }
-    }
-
-    // Store into an object
-    const allData = {
-      selectedMainCatelog: data,
-      relatedSecondCatelog: secondCatelog,
-    };
-
-    // Commit to mutation
-    commit('SET_SELECTED_MAIN_CATELOG', allData);
-  },
-  addLabel({ commit }, data) {
-    const selectedMainCatelog = data.selectedMainCatelog;
-    const selectedSecondCatelog = data.selectedSecondCatelog;
-    const newLabel = data.newLabel;
-
-    for (let value of state.labels) {
-      // Check the Main Catelog
-      if (
-        value.hasOwnProperty('catelog_name') &&
-        value.catelog_name == selectedMainCatelog
-      ) {
-        if (value.hasOwnProperty('subCatelog')) {
-          for (let subCatelog of value.subCatelog) {
-            // Check the Second Catelog
-            if (subCatelog.subCatelog_name == selectedSecondCatelog) {
-              // If there is no label in this Second Catelog
-              if (!subCatelog.hasOwnProperty('labels')) {
-                subCatelog.labels = [];
-              }
-              subCatelog.labels.push(newLabel);
-              resetLabels();
-            }
-          }
-        }
-      }
+    const { data } = await axios.get('/category.json');
+    if (data) {
+      commit(types.SET_DEFAULT_CATELOG, data);
     }
   },
-  setDefaultCatelog({ commit }, data) {
-    commit('SET_DEFAULT_CATELOG', data);
-  },
-  setSelectedIndex({ commit }, data) {
-    // [mainCatelogIndex, secondCatelogIndex, labelIndex]
-    const selectedindex = [];
 
-    state.labels.forEach((mainCatelog, first_index) => {
-      // If it's a main Catelog
-      if (
-        mainCatelog.hasOwnProperty('catelog_name') &&
-        mainCatelog.catelog_name == data
-      ) {
-        selectedindex.push(first_index);
-      } else {
-        // Check if there are Sub Catelog
-        if (mainCatelog.hasOwnProperty('subCatelog')) {
-          // Not on the main Catelog and Loop second Catelog
-          mainCatelog.subCatelog.forEach((secondCatelog, second_index) => {
-            // Check if it's second Catelog
-            if (
-              secondCatelog.hasOwnProperty('subCatelog_name') &&
-              secondCatelog.subCatelog_name == data
-            ) {
-              selectedindex.push(first_index, second_index);
-            } else {
-              // check if there are labels
-              if (secondCatelog.hasOwnProperty('labels')) {
-                // Not on the second Catelog and loop lables
-                secondCatelog.labels.forEach((label, label_index) => {
-                  if (label == data) {
-                    selectedindex.push(first_index, second_index, label_index);
-                  }
-                });
-              }
-            }
-          });
-        }
-      }
+  uploadCatelog: async ({ commit }) => {
+    commit(types.SET_IS_LOADING, true);
+    await axios.put('/category.json', {
+      mainCategories: state.mainCategories,
+      subCategories: state.subCategories,
+      labels: state.labels,
     });
-    commit('SET_SELECTED_INDEX', selectedindex);
+    commit(types.SET_IS_LOADING, false);
   },
+
   deleteCatelog({ commit }) {
     // [mainCatelogIndex, secondCatelogIndex, labelIndex]
     const index = state.selectedIndex;
@@ -219,39 +122,6 @@ const actions = {
       }
     }
   },
-  updateCatelog({ commit }, newCatelogName) {
-    // [mainCatelogIndex, secondCatelogIndex, labelIndex]
-    const index = state.selectedIndex;
-    const catelog = state.labels;
-    if (index.length > 0) {
-      switch (index.length) {
-        // On the main Catelog
-        case 1: {
-          catelog[index[0]].catelog_name = newCatelogName;
-          break;
-        }
-        // On the second Catelog
-        case 2: {
-          catelog[index[0]].subCatelog[
-            index[1]
-          ].subCatelog_name = newCatelogName;
-          break;
-        }
-        // On the Label  !!!!!!HAVE BUG!!!!!!
-        case 3: {
-          catelog[index[0]].subCatelog[index[1]].labels[
-            index[2]
-          ] = newCatelogName;
-          resetLabels();
-          break;
-        }
-      }
-    }
-  },
-};
-
-var resetLabels = () => {
-  state.labels = JSON.parse(JSON.stringify(state.labels));
 };
 
 export default {

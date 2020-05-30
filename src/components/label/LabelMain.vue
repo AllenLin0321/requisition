@@ -4,7 +4,7 @@
     <v-layout sm6 mb-3>
       <v-flex class="action">
         <!-- Add Catelog -->
-        <LabelActionAdd />
+        <LabelActionModal />
 
         <v-btn
           color="teal lighten-2"
@@ -49,12 +49,12 @@
 <script>
 import axios from 'axios';
 import LabelData from './LabelData';
-import LabelActionAdd from './LabelActionAdd';
+import LabelActionModal from './LabelActionModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    LabelActionAdd,
+    LabelActionModal,
     LabelData,
   },
   data: () => ({
@@ -72,30 +72,30 @@ export default {
     ...mapGetters(['data']),
   },
   methods: {
-    ...mapActions(['fetchCatelog']),
+    ...mapActions(['fetchCatelog', 'uploadCatelog']),
 
     // Upload the Catelog to firebase
-    async uploadCatelog() {
-      var vm = this;
-      this.showUploadProgress = true;
-      const formData = {
-        allCatelog: this.labels,
-      };
+    // async uploadCatelog() {
+    //   var vm = this;
+    //   this.showUploadProgress = true;
+    //   const formData = {
+    //     labels: this.labels.labels,
+    //   };
 
-      try {
-        const res = await axios.put('/catelog.json', formData);
-        this.snackbar.color = '#4CAF50';
-        this.snackbar.text = '儲存成功!';
-        this.snackbar.show = true;
-        vm.showUploadProgress = false;
-      } catch (error) {
-        console.log(error);
-        this.snackbar.color = '#FF5252';
-        this.snackbar.text = '儲存失敗!';
-        this.snackbar.show = true;
-        vm.showProgress = false;
-      }
-    },
+    //   try {
+    //     const res = await axios.put('/catelog.json', formData);
+    //     this.snackbar.color = '#4CAF50';
+    //     this.snackbar.text = '儲存成功!';
+    //     this.snackbar.show = true;
+    //     vm.showUploadProgress = false;
+    //   } catch (error) {
+    //     console.log(error);
+    //     this.snackbar.color = '#FF5252';
+    //     this.snackbar.text = '儲存失敗!';
+    //     this.snackbar.show = true;
+    //     vm.showProgress = false;
+    //   }
+    // },
   },
   created() {
     this.fetchCatelog();

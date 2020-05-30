@@ -19,27 +19,23 @@
 
       <!-- Label -->
       <CategoryList
-        v-for="(catelog, index) in labels"
-        :key="index"
-        :catelog="catelog"
+        v-for="mainCategory in allCategory"
+        :key="mainCategory.index"
+        :mainCategory="mainCategory"
       />
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import CategoryList from './CategoryList';
-import { mapState } from 'vuex';
 export default {
-  computed: {
-    ...mapState({
-      labels: state => {
-        return state.labels.labels;
-      },
-    }),
-  },
   components: {
     CategoryList,
+  },
+  computed: {
+    ...mapGetters({ allCategory: 'getCategory' }),
   },
 };
 </script>

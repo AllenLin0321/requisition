@@ -39,21 +39,15 @@ import ListHeader from './ListHeader';
 import ListData from './ListData';
 import ListDialog from './ListDialog';
 
-import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
-  data: () => ({
-    header: {
-      order: '#',
-      item: '項目',
-      quantity: '數量',
-      unit: '單位',
-      note: '備註',
-      action: '動作',
-    },
-  }),
   computed: {
-    ...mapGetters(['materials', 'fileName']),
+    ...mapState({
+      header: ({ material }) => material.header,
+      materials: ({ material }) => material.materials,
+      fileName: ({ material }) => material.fileName,
+    }),
   },
   components: {
     ListDialog,

@@ -14,16 +14,9 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-  data: () => ({
-    header: {
-      order: '#',
-      item: '項目',
-      quantity: '數量',
-      unit: '單位',
-      note: '備註',
-      action: '動作',
-    },
-  }),
+  computed: {
+    ...mapState({ header: ({ material }) => material.header }),
+  },
 };
 </script>
 

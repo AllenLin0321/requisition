@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-treeview
-      :items="data"
+      :items="allCategory"
       :open="open"
       open-on-click
       transition
@@ -10,7 +10,7 @@
     >
       <template v-slot:append="{ item, open }">
         <div v-if="!open">
-          <v-icon @click.stop="getData">edit</v-icon>
+          <v-icon @click.stop="onEditCategory(item)">edit</v-icon>
           <v-icon @click.stop="deleteCatelog">delete</v-icon>
         </div>
       </template>
@@ -40,18 +40,19 @@ export default {
   },
   computed: {
     ...mapState({ selectedIndex: ({ labels }) => labels.selectedIndex }),
-    ...mapGetters(['data']),
+    ...mapGetters({ allCategory: 'getCategory' }),
   },
   methods: {
     ...mapActions(['setSelectedIndex', 'deleteCatelog', 'updateCatelog']),
 
     // Open the dialog and get the new Catelog Name
-    getData(element) {
+    onEditCategory(element) {
+      console.log('element: ', element);
       // Show the input dialog
       this.dialog = true;
 
       // Get the content when click the icon
-      this.selectedContent = this.getContent(element);
+      // this.selectedContent = this.getContent(element);
 
       // Set the selectedIndex in vuex
       this.findIndex(this.selectedContent);
