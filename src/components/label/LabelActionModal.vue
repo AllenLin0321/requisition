@@ -141,7 +141,7 @@ export default {
       subCategories: ({ labels }) => labels.subCategories,
     }),
     relatedSubCategoried() {
-      if (this.subCategories.length === 0) return [];
+      if (!this.subCategories || this.subCategories.length === 0) return [];
       return this.subCategories.filter(
         subCategory => subCategory.parent === this.selectedMainCategory
       );
@@ -149,7 +149,6 @@ export default {
   },
   methods: {
     ...mapMutations([ADD_MAIN_CATELOG, ADD_SECOND_CATELOG, ADD_LABEL]),
-    // Add new Catelog ( Including: Main, Sub and Label)
     onAddCategory() {
       switch (this.currentTab) {
         // Add Main Catelog

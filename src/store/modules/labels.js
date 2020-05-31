@@ -1,6 +1,12 @@
 import axios from 'axios';
 import * as types from '../mutation-types';
 
+const CATEGORY_KEY = {
+  mainCategories: 'M',
+  subCategories: 'S',
+  labels: 'L',
+};
+
 const state = {
   mainCategories: [],
   subCategories: [],
@@ -14,17 +20,23 @@ const getters = {
   getCategory() {
     if (state.mainCategories.length === 0) return [];
 
-    const mergedSub = state.subCategories.map(sub => {
-      return {
-        name: sub.name,
-        parent: sub.parent,
-        children: state.labels.filter(label => label.parent === sub.index),
-      };
-    });
+    let mergedSub = [];
+
+    if (state.subCategories && state.subCategories.length > 0) {
+      mergedSub = state.subCategories.map(sub => {
+        return {
+          name: sub.name,
+          parent: sub.parent,
+          index: sub.index,
+          children: state.labels.filter(label => label.parent === sub.index),
+        };
+      });
+    }
 
     return state.mainCategories.map(main => {
       return {
         name: main.name,
+        index: main.index,
         children: mergedSub.filter(sub => sub.parent === main.index),
       };
     });
@@ -34,11 +46,10 @@ const getters = {
 const mutations = {
   // 添加主分類
   [types.ADD_MAIN_CATELOG](state, newManCategoryName) {
-    const index =
-      state.mainCategories.length === 0
-        ? 0
-        : state.mainCategories[state.mainCategories.length - 1].index + 1;
-    state.mainCategories.push({ index, name: newManCategoryName });
+    state.mainCategories.push({
+      index: getNextIndex('mainCategories'),
+      name: newManCategoryName,
+    });
     this.dispatch('uploadCatelog');
   },
 
@@ -47,12 +58,8 @@ const mutations = {
     state,
     { selectedMainCategory, newSubCatelogName }
   ) {
-    const index =
-      state.subCategories.length === 0
-        ? 0
-        : state.subCategories[state.subCategories.length - 1].index + 1;
     state.subCategories.push({
-      index, // 次分類編號
+      index: getNextIndex('subCategories'), // 次分類編號
       name: newSubCatelogName,
       parent: selectedMainCategory, // 關聯的主分類編號
     });
@@ -61,22 +68,83 @@ const mutations = {
 
   // 添加標籤
   [types.ADD_LABEL](state, { selectedSubCategory, newLabel }) {
-    const index =
-      state.labels.length === 0
-        ? 0
-        : state.labels[state.labels.length - 1].index + 1;
-    state.labels.push({ index, name: newLabel, parent: selectedSubCategory });
+    state.labels.push({
+      index: getNextIndex('labels'),
+      name: newLabel,
+      parent: selectedSubCategory,
+    });
     this.dispatch('uploadCatelog');
   },
 
-  // 預設分類
+  // 初始分類
   [types.SET_DEFAULT_CATELOG](
     state,
     { mainCategories, subCategories, labels }
   ) {
-    state.mainCategories = mainCategories;
-    state.subCategories = subCategories;
-    state.labels = labels;
+    state.mainCategories = mainCategories || [];
+    state.subCategories = subCategories || [];
+    state.labels = labels || [];
+  },
+
+  // 修改分類或是標籤名稱
+  [types.EDIT_CATEGORY](state, { selectedCategory, newCatelogName }) {
+    const categoryKey = selectedCategory.index.substr(0, 1);
+
+    switch (categoryKey) {
+      case CATEGORY_KEY.mainCategories:
+        state.mainCategories.find(
+          mainCategory => mainCategory.index == selectedCategory.index
+        ).name = newCatelogName;
+        break;
+      case CATEGORY_KEY.subCategories:
+        state.subCategories.find(
+          subCategory => subCategory.index == selectedCategory.index
+        ).name = newCatelogName;
+        break;
+      case CATEGORY_KEY.labels:
+        state.labels.find(
+          label => label.index == selectedCategory.index
+        ).name = newCatelogName;
+        break;
+    }
+    this.dispatch('uploadCatelog');
+  },
+
+  // 刪除分類或是標籤
+  [types.DELETE_CATEGORY](state, { index }) {
+    const categoryKey = index.substr(0, 1);
+
+    switch (categoryKey) {
+      case CATEGORY_KEY.mainCategories:
+        const relatedSubCategories2 = state.subCategories
+          .filter(sub => sub.parent === index)
+          .map(sub => sub.index);
+
+        // 刪除主分類
+        state.mainCategories = state.mainCategories.filter(
+          mainCategory => mainCategory.index !== index
+        );
+
+        state.subCategories = state.subCategories.filter(
+          subCategory => subCategory.parent !== index
+        );
+
+        state.labels = state.labels.filter(
+          label => !relatedSubCategories.includes(label.parent)
+        );
+
+        break;
+      case CATEGORY_KEY.subCategories:
+        state.subCategories = state.subCategories.filter(
+          subCategory => subCategory.index !== index
+        );
+        state.labels = state.labels.filter(label => label.parent !== index);
+        break;
+      case CATEGORY_KEY.labels:
+        state.labels = state.labels.filter(label => label.index !== index);
+        break;
+    }
+    this.dispatch('uploadCatelog');
   },
 };
 
@@ -97,31 +165,13 @@ const actions = {
     });
     commit(types.SET_IS_LOADING, false);
   },
+};
 
-  deleteCatelog({ commit }) {
-    // [mainCatelogIndex, secondCatelogIndex, labelIndex]
-    const index = state.selectedIndex;
-    const catelog = state.labels;
-    if (index.length > 0) {
-      switch (index.length) {
-        // On the main Catelog
-        case 1: {
-          catelog.splice(index[0], 1);
-          break;
-        }
-        // On the second Catelog
-        case 2: {
-          catelog[index[0]].subCatelog.splice(index[1], 1);
-          break;
-        }
-        // On the Label
-        case 3: {
-          catelog[index[0]].subCatelog[index[1]].labels.splice(index[2], 1);
-          break;
-        }
-      }
-    }
-  },
+const getNextIndex = category => {
+  if (state[category].length === 0) return `${CATEGORY_KEY[category]}0`;
+
+  const finalIndex = state[category][state[category].length - 1].index;
+  return CATEGORY_KEY[category] + (parseInt(finalIndex.substr(1)) + 1);
 };
 
 export default {

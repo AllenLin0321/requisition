@@ -6,36 +6,38 @@
       open-on-click
       transition
       dark
-      item-key="name"
+      item-key="index"
     >
       <template v-slot:append="{ item, open }">
         <div v-if="!open">
-          <v-icon @click.stop="onEditCategory(item)">edit</v-icon>
-          <v-icon @click.stop="deleteCatelog">delete</v-icon>
+          <v-icon @click.stop="onSelectedCategory(item)">edit</v-icon>
+          <v-icon @click.stop="onDeleteCatelog(item)">delete</v-icon>
         </div>
       </template>
     </v-treeview>
 
     <LabelUpdateDialog
-      :dialog="dialog"
-      @closeDialog="dialog = $event"
+      :isShowDialog="isShowDialog"
+      :selectedCategory="selectedCategory"
+      @closeDialog="isShowDialog = false"
       @newCatelog="uploadCatelog($event)"
     />
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapState, mapMutations } from 'vuex';
 import LabelUpdateDialog from './LabelUpdateDialog';
+import { DELETE_CATEGORY } from '../../store/mutation-types';
 export default {
   components: {
     LabelUpdateDialog,
   },
-  data() {
+  data: () => {
     return {
-      dialog: false,
+      isShowDialog: false,
       open: ['public'],
-      selectedContent: '',
+      selectedCategory: {},
     };
   },
   computed: {
@@ -43,43 +45,14 @@ export default {
     ...mapGetters({ allCategory: 'getCategory' }),
   },
   methods: {
-    ...mapActions(['setSelectedIndex', 'deleteCatelog', 'updateCatelog']),
-
-    // Open the dialog and get the new Catelog Name
-    onEditCategory(element) {
-      console.log('element: ', element);
-      // Show the input dialog
-      this.dialog = true;
-
-      // Get the content when click the icon
-      // this.selectedContent = this.getContent(element);
-
-      // Set the selectedIndex in vuex
-      this.findIndex(this.selectedContent);
+    ...mapMutations([DELETE_CATEGORY]),
+    onSelectedCategory(selectedCategory) {
+      this.isShowDialog = true;
+      this.selectedCategory = selectedCategory;
     },
 
-    // Update the new Catelog Name
-    uploadCatelog(newCatelogName) {
-      // Update the catelog
-      this.updateCatelog(newCatelogName);
-    },
-    // Delete the Catelog
-    deleteCatelog(element) {
-      const content = this.getContent(element);
-      // Set the selectedIndex in vuex
-      this.findIndex(content);
-      this.deleteCatelog();
-    },
-    // Find the index for the selected Catelog and store in the vuex
-    findIndex(content) {
-      this.setSelectedIndex(content);
-    },
-    // Get the content when click the icon
-    getContent(element) {
-      const text = element.toElement.parentElement.parentElement.getElementsByTagName(
-        'div'
-      )[0].innerHTML;
-      return text;
+    onDeleteCatelog(selectedCategory) {
+      this.DELETE_CATEGORY(selectedCategory);
     },
   },
 };

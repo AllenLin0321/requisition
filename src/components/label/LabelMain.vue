@@ -6,15 +6,6 @@
         <!-- Add Catelog -->
         <LabelActionModal />
 
-        <v-btn
-          color="teal lighten-2"
-          class="white--text"
-          @click="uploadCatelog"
-        >
-          儲存目錄
-          <v-icon right dark>backup</v-icon>
-        </v-btn>
-
         <!-- Show Progree circle when uploading the data to firebase -->
         <v-progress-circular
           indeterminate
@@ -72,30 +63,7 @@ export default {
     ...mapGetters(['data']),
   },
   methods: {
-    ...mapActions(['fetchCatelog', 'uploadCatelog']),
-
-    // Upload the Catelog to firebase
-    // async uploadCatelog() {
-    //   var vm = this;
-    //   this.showUploadProgress = true;
-    //   const formData = {
-    //     labels: this.labels.labels,
-    //   };
-
-    //   try {
-    //     const res = await axios.put('/catelog.json', formData);
-    //     this.snackbar.color = '#4CAF50';
-    //     this.snackbar.text = '儲存成功!';
-    //     this.snackbar.show = true;
-    //     vm.showUploadProgress = false;
-    //   } catch (error) {
-    //     console.log(error);
-    //     this.snackbar.color = '#FF5252';
-    //     this.snackbar.text = '儲存失敗!';
-    //     this.snackbar.show = true;
-    //     vm.showProgress = false;
-    //   }
-    // },
+    ...mapActions(['fetchCatelog']),
   },
   created() {
     this.fetchCatelog();
